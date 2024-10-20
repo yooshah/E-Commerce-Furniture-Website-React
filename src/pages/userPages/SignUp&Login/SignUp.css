@@ -1,0 +1,105 @@
+/* .signup-box {
+  color: #333;
+  
+  border-radius: 5%;
+  background-color: #dddddd;
+}
+
+input {
+  border: none;
+  outline: none;
+  margin-left: 1.2rem;
+}
+
+.input-formbox {
+  border: 1px solid #dddddd;
+  border-radius: 5px;
+}
+
+.term-condition {
+  color: #ff7035;
+  cursor: pointer;
+}
+
+.term-condition:hover {
+  text-decoration: underline;
+} */
+
+/* .background {
+  background-image: url("https://raw.githubusercontent.com/arunkjojo/FurnitureAppClone/refs/heads/main/assets/images/fn2.jpg");
+  height: 75vh;
+  background-size: cover; 
+  background-position: center; 
+  border-radius: 10%;
+} */
+/* 
+.background2 {
+  background-image: url("https://raw.githubusercontent.com/arunkjojo/FurnitureAppClone/refs/heads/main/assets/images/fn2.jpg");
+  height: 75vh; 
+  background-size: cover; 
+  background-position: center; 
+  border-radius: 10%;
+}
+
+.input-error {
+  color: red; 
+  font-size: 0.9em; 
+  margin-top: 0.5em;
+  line-height: 0.2rem;
+} */
+
+/********/
+
+.background {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+.signUp-btn {
+  background-color: #198754;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.input-formbox img {
+  margin-right: 10px;
+}
+
+.input-error {
+  color: red;
+}
+
+.inner-box {
+  background-color: #f7f7f7;
+}
+
+.login-container {
+  height: 33rem;
+}
+
+.register-box {
+  border: 1px solid #ddd;
+
+  padding-left: 10px;
+  padding-bottom: 10px;
+}
+
+.sign-container {
+  height: 35rem;
+}

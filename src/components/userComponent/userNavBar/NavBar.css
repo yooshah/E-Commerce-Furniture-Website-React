@@ -1,0 +1,67 @@
+.navbar-main-box {
+  background-color: #f7f7f7;
+}
+
+.nav-offer {
+  background-color: #198754;
+  color: #fff;
+}
+
+.nav-search-bar {
+  border-radius: 5%;
+}
+.nav-search-bar:focus {
+  border-color: #198754;
+}
+
+.navbar-nav .nav-item img {
+  filter: none; /* Remove filter if used before */
+  transition: color 0.3s ease; /* Smooth transition for color change */
+}
+
+/* Hover effect to change color to #198754 */
+.navbar-nav .nav-item img:hover {
+  filter: invert(40%) sepia(100%) saturate(300%) hue-rotate(75deg)
+    brightness(100%) contrast(90%);
+}
+
+.navbarBox {
+  border-bottom: #dddddd;
+}
+
+.menu-tab {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  gap: 3rem;
+  padding: 0.5rem 2rem;
+  border-bottom: 1px solid #dddddd;
+}
+
+.menu-tab span {
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.menu-tab span:hover {
+  color: #198754;
+}
+li {
+  cursor: pointer;
+  text-align: left;
+  padding-left: 5px;
+}
+
+.logos {
+  cursor: pointer;
+}
+
+.input-text:focus {
+  box-shadow: 0px 0px 0px;
+  border-color: #12f40a;
+  outline: 0px;
+}
+
+.form-control {
+  border: 1px solid #198754;
+}

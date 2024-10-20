@@ -1,0 +1,52 @@
+.show-items {
+  color: #198754;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap; /* If you have multiple rows of cards */
+}
+
+.card {
+  flex: 1;
+  margin: 10px; /* Adjust margins as needed */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Helps to space the content evenly */
+}
+
+.items-boxs {
+  cursor: pointer;
+}
+.items-boxs span:hover {
+  text-decoration: underline;
+}
+
+/****/
+
+.ProductList-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 columns for large screens */
+  gap: 1rem; /* Space between items */
+  padding: 1rem; /* Add some padding around the grid */
+}
+
+.productList {
+  border: 1px solid #dddddd;
+  border-radius: 0.5rem; /* Rounded corners */
+  padding-bottom: 1rem;
+  width: 18rem;
+}
+
+.carrd-img {
+  cursor: pointer;
+}
+
+.carrd-text {
+  cursor: pointer;
+}
+.carrd-text:hover {
+  text-decoration: underline;
+}

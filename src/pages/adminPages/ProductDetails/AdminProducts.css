@@ -1,0 +1,16 @@
+.table-images {
+  height: 6.4rem;
+  width: 6.4rem;
+}
+.eddit-btn {
+  cursor: pointer;
+}
+
+.editModal-img {
+  height: 200px;
+  width: 200px;
+}
+
+.whattowrite {
+  font-size: small;
+}
