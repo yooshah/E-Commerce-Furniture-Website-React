@@ -1,0 +1,13 @@
+.admin-footer {
+  background-color: #f9f9f9;
+  color: #222;
+  font-size: 14px;
+}
+
+.admin-footer .text-success {
+  color: #198754; /* Bootstrap success green or customize as needed */
+}
+
+.admin-footer .text-dark {
+  color: #222;
+}

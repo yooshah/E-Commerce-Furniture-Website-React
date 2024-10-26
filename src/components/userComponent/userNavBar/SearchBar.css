@@ -1,0 +1,25 @@
+.search-container {
+  position: relative; /* Ensure the dropdown is positioned relative to this container */
+}
+.nav-search-bar {
+  z-index: 1; /* Ensure the input is above other elements */
+}
+.dropdown {
+  position: absolute; /* Position the dropdown absolutely */
+  top: 100%; /* Align it below the input */
+  left: 0; /* Align it to the left of the input */
+  right: 0; /* Make it as wide as the input */
+  background-color: white; /* Background color */
+  border: 1px solid #ccc; /* Border for dropdown */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Shadow for better visibility */
+  z-index: 1000; /* Ensure it appears above other elements */
+  max-height: 200px; /* Optional: set a max height */
+  overflow-y: auto; /* Optional: enable scrolling if there are many items */
+}
+.dropdown div {
+  cursor: pointer;
+}
+
+.dropdown div:hover {
+  color: #198754;
+}
