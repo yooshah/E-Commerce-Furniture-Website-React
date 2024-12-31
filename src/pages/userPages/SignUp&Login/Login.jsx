@@ -1,13 +1,16 @@
-import { useContext } from "react";
+// import { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+// import axios from "axios";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import "./SignUp.css";
-import { ProductContext } from "../../../Provider/ProductContext";
-import { AdminContext } from "../../../Provider/AdminContext";
+// import { ProductContext } from "../../../Provider/ProductContext";
+// import { AdminContext } from "../../../Provider/AdminContext";
 import email_icon from "./signupassets/email.png";
 import password_icon from "./signupassets/password.png";
+import { checkAccount } from "../../../features/AuthSlice";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
 
 // Yup validation schema
 const loginSchema = Yup.object().shape({
@@ -19,10 +22,15 @@ const loginSchema = Yup.object().shape({
 
 function Login() {
   const navigate = useNavigate();
-  const { userLogin } = useContext(ProductContext);
-  const { adminLogin, setCheckAdmin, checkAdmin, setIsLoading } =
-    useContext(AdminContext);
-  console.log(checkAdmin);
+
+  // const { loading, error, isLoggedIn } = useSelector(
+  //   (state) => state.auth
+  // );
+  const dispatch = useDispatch();
+  // const { userLogin } = useContext(ProductContext);
+  // const { adminLogin, setCheckAdmin, checkAdmin, setIsLoading } =
+  //   useContext(AdminContext);
+  // console.log(checkAdmin);
   // Formik setup
   const formik = useFormik({
     initialValues: {
@@ -30,80 +38,98 @@ function Login() {
       password: "",
     },
     validationSchema: loginSchema,
-    onSubmit: async (values, { setSubmitting }) => {
-      if (values.email.includes("@furniadmin")) {
-        const adminResponse = await adminVerify(values.email, values.password);
+    onSubmit: async (values) => {
+      // if (values.email.includes("@furniadmin")) {
+      //   const adminResponse = await adminVerify(values.email, values.password);
 
-        if (adminResponse) {
-          const [adminloged] = adminResponse;
-          adminLogin({
-            AdminId: adminloged.id,
-            email: adminloged.email,
-            AdminName: adminloged.name,
-            admin: true,
-          });
-          localStorage.setItem("AdminId", adminloged.id);
-          localStorage.setItem("email", adminloged.email);
-          localStorage.setItem("name", adminloged.name);
-          localStorage.setItem("admin", true);
-          setCheckAdmin(true);
-          setIsLoading(false);
-          navigate("/adminaccount");
+      try {
+        const response = await dispatch(
+          checkAccount({ email: values.email, password: values.password })
+        ).unwrap();
+
+        localStorage.setItem("userId", response.id);
+        localStorage.setItem("name", response.name);
+        localStorage.setItem("email", response.email);
+        localStorage.setItem("token", response.token);
+        if (response.role == "user") {
+          navigate("/");
         }
-      } else {
-        const response = await checkAccount(values.email, values.password);
-
-        if (response) {
-          const [userloged] = response;
-          if (userloged.state == "active") {
-            userLogin({ userId: userloged.id, email: userloged.email });
-            localStorage.setItem("userId", userloged.id);
-            localStorage.setItem("email", userloged.email);
-            localStorage.setItem("userName", userloged.name);
-            localStorage.setItem("admin", false);
-            setCheckAdmin(false);
-
-            navigate("/");
-          } else {
-            alert("Your account is blocked");
-            navigate("/");
-          }
-          setSubmitting(false);
-        } else {
-          alert("Wrong email or password");
-        }
+      } catch (error) {
+        toast.error(error.error);
       }
+
+      // if (adminResponse) {
+      //   const [adminloged] = adminResponse;
+      //   adminLogin({
+      //     AdminId: adminloged.id,
+      //     email: adminloged.email,
+      //     AdminName: adminloged.name,
+      //     admin: true,
+      //   });
+      //   localStorage.setItem("AdminId", adminloged.id);
+      //   localStorage.setItem("email", adminloged.email);
+      //   localStorage.setItem("name", adminloged.name);
+      //   localStorage.setItem("admin", true);
+      //   setCheckAdmin(true);
+      //   setIsLoading(false);
+      //   navigate("/adminaccount");
+      // }
+      // } else {
+
+      // if (response.a) {
+      //   const [userloged] = response;
+      //   if (userloged.state == "active") {
+      //     userLogin({ userId: userloged.id, email: userloged.email });
+
+      //     localStorage.setItem("email", userloged.email);
+      //     localStorage.setItem("userName", userloged.name);
+      //     localStorage.setItem("token", userloged.token);
+      //     // localStorage.setItem("admin", false);
+      //     if(response.accountStatus){
+      //       setCheckAdmin(false);
+
+      //     }
+
+      //     navigate("/");
+      //   } else {
+      //     alert("Your account is blocked");
+      //     navigate("/");
+      //   }
+      //   setSubmitting(false);
+      // } else {
+      //   alert("Wrong email or password");
+      // }
     },
   });
 
   // Check if account exists
-  async function checkAccount(email, password) {
-    try {
-      const response = await axios.get(
-        `http://localhost:5000/users?email=${email}&password=${password}`
-      );
-      if (response.status >= 200) {
-        return response.data.length > 0 ? response.data : false;
-      }
-      throw new Error("Network Error");
-    } catch (err) {
-      console.error("Error:", err);
-    }
-  }
+  // async function checkAccount(email, password) {
+  //   try {
+  //     const response = await axios.get(
+  //       `http://localhost:5000/users?email=${email}&password=${password}`
+  //     );
+  //     if (response.status >= 200) {
+  //       return response.data.length > 0 ? response.data : false;
+  //     }
+  //     throw new Error("Network Error");
+  //   } catch (err) {
+  //     console.error("Error:", err);
+  //   }
+  // }
 
-  const adminVerify = async (email, password) => {
-    try {
-      const response = await axios.get(
-        `http://localhost:5000/admin?email=${email}&password=${password}`
-      );
+  // const adminVerify = async (email, password) => {
+  //   try {
+  //     const response = await axios.get(
+  //       `http://localhost:5000/admin?email=${email}&password=${password}`
+  //     );
 
-      if (response.status >= 200) {
-        return response.data;
-      }
-    } catch (err) {
-      console.error(" loging error:", err);
-    }
-  };
+  //     if (response.status >= 200) {
+  //       return response.data;
+  //     }
+  //   } catch (err) {
+  //     console.error(" loging error:", err);
+  //   }
+  // };
 
   return (
     <div className="container">

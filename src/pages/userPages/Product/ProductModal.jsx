@@ -94,6 +94,12 @@ function ProductModal(props) {
               <h6>
                 <Rating rating={props.previewProduct?.rating} />
               </h6>
+              <h6>
+                Stock:{" "}
+                <span className="text-warning">
+                  {props.previewProduct?.stock}
+                </span>
+              </h6>
             </div>
           </div>
         </ModalBody>

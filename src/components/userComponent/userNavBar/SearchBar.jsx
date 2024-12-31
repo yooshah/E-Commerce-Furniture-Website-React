@@ -1,19 +1,44 @@
 import { ProductContext } from "../../../Provider/ProductContext";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import "./SearchBar.css";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchSearchProduct } from "../../../features/productSlice";
 
 function SearchBar() {
   const { products, setFilterItems } = useContext(ProductContext);
 
   const [formData, setFormData] = useState("");
+  const [debounceSearch, setDebounceSearch] = useState(formData);
   const [isDropdownOpen, setDropdownOpen] = useState(false);
+
+  const dispatch = useDispatch();
+  const searchProducts = useSelector((state) => state.product.products);
+  console.log(searchProducts);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebounceSearch(formData);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [formData]);
+
+  useEffect(() => {
+    if (debounceSearch) {
+      dispatch(fetchSearchProduct(formData));
+    }
+  }, [dispatch, debounceSearch]);
 
   const handleChange = (e) => {
     setFormData(e.target.value);
-    setDropdownOpen(true);
-    setFilterItems(filteredProducts);
   };
+
+  // const handleChange = (e) => {
+  //   setFormData(e.target.value);
+  //   setDropdownOpen(true);
+  //   setFilterItems(filteredProducts);
+  // };
   const handleSubmit = (e) => {
     e.preventDefault();
     setDropdownOpen(false);
