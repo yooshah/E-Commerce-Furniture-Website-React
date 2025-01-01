@@ -1,25 +1,53 @@
 import "./NavBar.css";
 import SearchBar from "./SearchBar";
 import { Link, useNavigate } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { ProductContext } from "../../../Provider/ProductContext";
 import { ToastContainer, toast } from "react-toastify";
 import { useLocation } from "react-router-dom";
 import { AdminContext } from "../../../Provider/AdminContext";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUserCart } from "../../../features/cartSlice";
+import {
+  fetchProductByCategory,
+  fetchProducts,
+} from "../../../features/productSlice";
+// import { Login } from "@mui/icons-material";
+import { tokenLogin, logout } from "../../../features/AuthSlice";
 
 function NavBar() {
-  const { user, initialCartItems, logOut, setFilterItems, products } =
+  const { user, initialCartItems, logOut, setFilterItems } =
     useContext(ProductContext);
   const { checkAdmin } = useContext(AdminContext);
   const navigate = useNavigate();
 
   const location = useLocation();
 
+  const { cart } = useSelector((state) => state.cart);
+
+  const { isLoggedIn } = useSelector((state) => state.auth);
+
+  console.log(isLoggedIn);
+
+  console.log(cart);
+
   const isHomePage = location.pathname === "/";
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchUserCart());
+  }, [dispatch]);
+  console.log(cart);
+  const token = localStorage.getItem("token");
+  useEffect(() => {
+    if (token) {
+      dispatch(tokenLogin());
+    }
+  }, [dispatch, token]);
 
   const handleLogout = () => {
-    logOut();
-    toast.success("Logout");
+    dispatch(logout());
+    localStorage.clear();
     navigate("/");
     return;
   };
@@ -27,18 +55,22 @@ function NavBar() {
     setFilterItems([]);
   };
 
-  const handleCategory = (category) => {
-    const catgorisedItem = products.filter((val) => val.category == category);
-    setFilterItems(catgorisedItem);
+  const handleCategory = (categoryId) => {
+    console.log(categoryId);
+    try {
+      dispatch(fetchProductByCategory(categoryId)).unwrap();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const handleLogo = () => {
-    setFilterItems([]);
+  const handleLogo = async () => {
+    await dispatch(fetchProducts());
     navigate("/");
   };
 
-  let cartNumber = initialCartItems.length;
-  
+  let cartNumber = cart.length;
+
   if (cartNumber == 0) {
     cartNumber = null;
   }
@@ -125,7 +157,7 @@ function NavBar() {
                 </Link>
               </li>
               <li className="nav-item nav-icons position-relative">
-                {user ? (
+                {isLoggedIn ? (
                   <div className="nav-link cart-icon " onClick={handleLogout}>
                     <img
                       src="src\components\assets\logout.svg"
@@ -155,15 +187,13 @@ function NavBar() {
 
       {isHomePage && (
         <div className="menu-tab">
-          <span onClick={() => handleCategory("Living")}>Living</span>
-          <span onClick={() => handleCategory("Dining")}>Dining</span>
-          <span onClick={() => handleCategory("Bedroom")}>Bedroom</span>
-          <span onClick={() => handleCategory("Sofas")}>Sofas</span>
-          <span onClick={() => handleCategory("Kitchen")}>Kitchen</span>
-          <span onClick={() => handleCategory("Office")}>Office</span>
-          <span onClick={() => handleCategory("New Arrivals")}>
-            New Arrival
-          </span>
+          <span onClick={() => handleCategory(2)}>Living</span>
+          <span onClick={() => handleCategory(4)}>Dining</span>
+          <span onClick={() => handleCategory(3)}>Bedroom</span>
+          <span onClick={() => handleCategory(1)}>Sofas</span>
+          <span onClick={() => handleCategory(7)}>Kitchen</span>
+          <span onClick={() => handleCategory(6)}>Office</span>
+          <span onClick={() => handleCategory(5)}>New Arrival</span>
         </div>
       )}
     </>

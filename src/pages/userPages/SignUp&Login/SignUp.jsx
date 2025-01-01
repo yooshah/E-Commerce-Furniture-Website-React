@@ -1,20 +1,27 @@
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
-import axios from "axios";
+
 import { ToastContainer, toast } from "react-toastify";
 import * as Yup from "yup";
 import "./SignUp.css";
 import person_icon from "./signupassets/person.png";
 import email_icon from "./signupassets/email.png";
 import password_icon from "./signupassets/password.png";
+import { useDispatch } from "react-redux";
+import { registerAccount } from "../../../features/AuthSlice";
+import { endPoints } from "../../../api/endPoints";
 
 // Validation Schema using Yup
 const basicSchema = Yup.object().shape({
   name: Yup.string().required("Required"),
   email: Yup.string().email("Invalid email").required("Required"),
   password: Yup.string()
-    .min(6, "Password must be at least 6 characters")
+    .matches(
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%?&])[A-Za-z\d@$!%*?&]{8,15}$/,
+      "Password must be 8 to 15 characters long and contain at least one letter, one number, and one special character."
+    )
     .required("Required"),
+
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password"), null], "Passwords must match")
     .required("Required"),
@@ -22,6 +29,7 @@ const basicSchema = Yup.object().shape({
 
 function SignUp() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // Initializing Formik
   const formik = useFormik({
@@ -33,52 +41,79 @@ function SignUp() {
     },
     validationSchema: basicSchema,
     onSubmit: async (values) => {
-      const response = await verifyDuplicateAccount(values.email);
+      console.log("Form submitted with values: ", values);
+      console.log(
+        "Register URL:",
+        `${import.meta.env.VITE_BASE_URL}${endPoints.AUTH.REGISTER}`
+      );
+      try {
+        const response = await dispatch(
+          registerAccount({
+            name: values.name,
+            email: values.email,
+            password: values.password,
+            confirmPassword: values.confirmPassword,
+          })
+        ).unwrap();
+        console.log(response);
 
-      if (response.data.length > 0) {
-        toast.error("Email already registered");
+        toast.success("Registration successful!");
+        setTimeout(() => {
+          navigate("/login");
+        }, 1000);
         return;
+      } catch (error) {
+        toast.error(error.data.message);
       }
-
-      saveCredentials({
-        name: values.name,
-        email: values.email,
-        password: values.password,
-        state: "active",
-      }).then(() => {
-        toast.success("Registration Successful");
-        navigate("/login");
-      });
     },
   });
+  //   async (values) => {
+  //     const response = await verifyDuplicateAccount(values.email);
+
+  //     if (response.data.length > 0) {
+  //       toast.error("Email already registered");
+  //       return;
+  //     }
+
+  //     saveCredentials({
+  //       name: values.name,
+  //       email: values.email,
+  //       password: values.password,
+  //       state: "active",
+  //     }).then(() => {
+  //       toast.success("Registration Successful");
+  //       navigate("/login");
+  //     });
+  //   },
+  // });
 
   // Check for duplicate email
-  async function verifyDuplicateAccount(email) {
-    try {
-      const response = await axios.get(
-        `http://localhost:5000/users?email=${email}`
-      );
-      return response;
-    } catch (error) {
-      console.error("Error checking duplicate email:", error);
-    }
-  }
+  // async function verifyDuplicateAccount(email) {
+  //   try {
+  //     const response = await axios.get(
+  //       `http://localhost:5000/users?email=${email}`
+  //     );
+  //     return response;
+  //   } catch (error) {
+  //     console.error("Error checking duplicate email:", error);
+  //   }
+  // }
 
-  // Save user credentials
-  async function saveCredentials(values) {
-    try {
-      const response = await axios.post("http://localhost:5000/users", values);
+  // // Save user credentials
+  // async function saveCredentials(values) {
+  //   try {
+  //     const response = await axios.post("http://localhost:5000/users", values);
 
-      if (response.status === 201) {
-        return response;
-      } else {
-        toast.error("Failed to register user");
-      }
-    } catch (error) {
-      console.error("Error posting data:", error);
-      toast.error("An error occurred. Please try again.");
-    }
-  }
+  //     if (response.status === 201) {
+  //       return response;
+  //     } else {
+  //       toast.error("Failed to register user");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error posting data:", error);
+  //     toast.error("An error occurred. Please try again.");
+  //   }
+  // }
 
   return (
     <div className="container">
