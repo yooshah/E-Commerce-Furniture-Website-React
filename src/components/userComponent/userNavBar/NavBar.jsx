@@ -7,13 +7,13 @@ import { ToastContainer, toast } from "react-toastify";
 import { useLocation } from "react-router-dom";
 import { AdminContext } from "../../../Provider/AdminContext";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchCart } from "../../../features/cartSlice";
+import { fetchUserCart } from "../../../features/cartSlice";
 import {
   fetchProductByCategory,
   fetchProducts,
 } from "../../../features/productSlice";
 // import { Login } from "@mui/icons-material";
-import { tokenLogin } from "../../../features/AuthSlice";
+import { tokenLogin, logout } from "../../../features/AuthSlice";
 
 function NavBar() {
   const { user, initialCartItems, logOut, setFilterItems } =
@@ -25,24 +25,29 @@ function NavBar() {
 
   const { cart } = useSelector((state) => state.cart);
 
+  const { isLoggedIn } = useSelector((state) => state.auth);
+
+  console.log(isLoggedIn);
+
+  console.log(cart);
+
   const isHomePage = location.pathname === "/";
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchCart);
+    dispatch(fetchUserCart());
   }, [dispatch]);
   console.log(cart);
   const token = localStorage.getItem("token");
   useEffect(() => {
     if (token) {
       dispatch(tokenLogin());
-      
     }
   }, [dispatch, token]);
 
   const handleLogout = () => {
-    logOut();
-    toast.success("Logout");
+    dispatch(logout());
+    localStorage.clear();
     navigate("/");
     return;
   };
@@ -64,7 +69,7 @@ function NavBar() {
     navigate("/");
   };
 
-  let cartNumber = initialCartItems.length;
+  let cartNumber = cart.length;
 
   if (cartNumber == 0) {
     cartNumber = null;
@@ -152,7 +157,7 @@ function NavBar() {
                 </Link>
               </li>
               <li className="nav-item nav-icons position-relative">
-                {user ? (
+                {isLoggedIn ? (
                   <div className="nav-link cart-icon " onClick={handleLogout}>
                     <img
                       src="src\components\assets\logout.svg"

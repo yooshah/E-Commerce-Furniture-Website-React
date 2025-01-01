@@ -3,7 +3,10 @@ import { useContext, useEffect, useState } from "react";
 
 import "./SearchBar.css";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchSearchProduct } from "../../../features/productSlice";
+import {
+  fetchProductById,
+  fetchSearchProduct,
+} from "../../../features/productSlice";
 
 function SearchBar() {
   const { products, setFilterItems } = useContext(ProductContext);
@@ -32,6 +35,7 @@ function SearchBar() {
 
   const handleChange = (e) => {
     setFormData(e.target.value);
+    setDropdownOpen(true);
   };
 
   // const handleChange = (e) => {
@@ -47,8 +51,12 @@ function SearchBar() {
   };
 
   const handleClick = (id) => {
-    const clickItem = products.find((val) => val.id == id);
-    setFilterItems([clickItem]);
+    // const clickItem = products.find((val) => val.id == id);
+    // setFilterItems([clickItem]);
+    // setFormData("");
+    console.log(id);
+
+    dispatch(fetchProductById(id));
     setFormData("");
   };
   const filteredProducts = products.filter((product) =>
@@ -71,11 +79,11 @@ function SearchBar() {
       </form>
       {isDropdownOpen && formData && (
         <ul className="dropdown">
-          {filteredProducts.map((product) => (
+          {searchProducts.map((product) => (
             <div
-              key={product.id}
+              key={product.productId}
               className="text-start"
-              onMouseDown={() => handleClick(product.id)}
+              onMouseDown={() => handleClick(product.productId)}
             >
               {product.name}
             </div>

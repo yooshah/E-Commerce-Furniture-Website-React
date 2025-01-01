@@ -50,9 +50,27 @@ export const fetchSearchProduct = createAsyncThunk(
       const response = await axiosInstane.get(
         endPoints.PRODUCT.SEARCH_PRODUCT(searchWord)
       );
-      console.log(response.data);
+
       return response.data;
     } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const fetchProductById = createAsyncThunk(
+  "products/fetchProductById",
+  async (prdtId, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstane.get(
+        endPoints.PRODUCT.GET_PRODUCT_BY_ID(prdtId)
+      );
+      console.log(response.data.data);
+      return response.data.data;
+    } catch (error) {
+      if (error.response) {
+        return rejectWithValue(error.response.data);
+      }
       return rejectWithValue(error.message);
     }
   }
@@ -102,6 +120,19 @@ const productSlice = createSlice({
       .addCase(fetchSearchProduct.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(fetchProductById.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchProductById.fulfilled, (state, action) => {
+        state.products = [action.payload];
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(fetchProductById.rejected, (state, action) => {
+        state.error = action.payload;
+        state.loading = false;
       });
   },
 });

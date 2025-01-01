@@ -47,10 +47,10 @@ function Login() {
           checkAccount({ email: values.email, password: values.password })
         ).unwrap();
 
-        localStorage.setItem("userId", response.id);
         localStorage.setItem("name", response.name);
         localStorage.setItem("email", response.email);
         localStorage.setItem("token", response.token);
+        localStorage.setItem("role", response.role);
         if (response.role == "user") {
           navigate("/");
         }

@@ -74,7 +74,6 @@ const authSlice = createSlice({
         state.user = action.payload;
         state.isLoggedIn = true;
         state.loading = false;
-        localStorage.setItem("user", JSON.stringify(action.payload));
       })
       .addCase(checkAccount.rejected, (state, action) => {
         state.error = action.payload;

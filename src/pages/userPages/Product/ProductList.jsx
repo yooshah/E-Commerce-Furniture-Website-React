@@ -2,10 +2,18 @@
 // import { useNavigate } from "react-router-dom";
 // import { useContext } from "react";
 // import axios from "axios";
+import { useDispatch } from "react-redux";
 import "./Product.css";
+import { AddToCart } from "../../../features/cartSlice";
+import { logout } from "../../../features/AuthSlice";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 /* eslint-disable react/prop-types */
 function ProductList({ items, onProductClick }) {
+  const dispatch = useDispatch();
+
+  const navigate = useNavigate();
   // const { addToCart } = useContext(CartContext);
   // const { user, setInitialCartItems, initialCartItems } =
   //   useContext(ProductContext);
@@ -66,6 +74,19 @@ function ProductList({ items, onProductClick }) {
   //   }
   // };
 
+  const handleAddToCart = async (id) => {
+    try {
+      const response = await dispatch(AddToCart(id)).unwrap();
+      console.log(response);
+      toast.success(response.message);
+    } catch (error) {
+      if (error.status == 401) {
+        localStorage.clear();
+        navigate("/login");
+      }
+    }
+  };
+
   return (
     <div className="productList">
       <div className="carrd">
@@ -94,7 +115,7 @@ function ProductList({ items, onProductClick }) {
               <button
                 type="button"
                 className="btn btn-outline-success"
-                // onClick={() => handleAddToCart(items.productId)}
+                onClick={() => handleAddToCart(items.productId)}
               >
                 Add To Cart
               </button>

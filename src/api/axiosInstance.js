@@ -9,9 +9,9 @@ const axiosInstane = axios.create({
 });
 
 const getToken = () => {
-  const user = JSON.parse(localStorage.getItem("user"));
+  const token = localStorage.getItem("token");
 
-  return user ? user.token : null;
+  return token ? token : null;
 };
 axiosInstane.interceptors.request.use(
   (config) => {
@@ -20,6 +20,7 @@ axiosInstane.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    console.log(token);
     return config;
   },
   (error) => {
