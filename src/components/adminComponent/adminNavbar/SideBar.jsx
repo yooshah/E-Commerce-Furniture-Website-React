@@ -45,9 +45,7 @@ export default function Sidebar() {
               </ListItemButton>
             </ListItem>
             <ListItem>
-              <ListItemButton onClick={handleNavigation("/notifications")}>
-                Notifications
-              </ListItemButton>
+              <ListItemButton>Notifications</ListItemButton>
             </ListItem>
             <ListItem>
               <ListItemButton onClick={handleNavigation("/webproducts")}>

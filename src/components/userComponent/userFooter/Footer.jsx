@@ -1,11 +1,13 @@
-import { useContext } from "react";
-import { AdminContext } from "../../../Provider/AdminContext";
+import { useLocation } from "react-router-dom";
 import "./Footer.css"; // Create this CSS file for any custom styles
 
 function Footer() {
-  const { checkAdmin } = useContext(AdminContext);
+  const location = useLocation();
+  if (localStorage.getItem("role") == "admin") {
+    return null;
+  }
 
-  if (checkAdmin) {
+  if (location.pathname == "/login" || location.pathname == "/signup") {
     return null;
   }
   return (

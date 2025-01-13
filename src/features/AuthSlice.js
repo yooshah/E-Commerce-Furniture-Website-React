@@ -2,7 +2,6 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import axiosInstane from "../api/axiosInstance";
 import { endPoints } from "../api/endPoints";
-import { Logout } from "@mui/icons-material";
 
 export const checkAccount = createAsyncThunk(
   "auth/checkAccount",
@@ -49,13 +48,14 @@ const initialState = {
   user: null,
   isLoggedIn: false,
   registeruser: null,
+  error: null,
+  loading: false,
 };
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  error: null,
-  loading: false,
+
   reducers: {
     tokenLogin(state) {
       state.isLoggedIn = true;

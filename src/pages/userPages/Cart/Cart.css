@@ -7,7 +7,7 @@
 }
 
 .cart-container {
-  height: 45rem;
+  min-height: 32.9rem;
 }
 
 .order-list {

@@ -1,10 +1,6 @@
-import { useContext } from "react";
-import { AdminContext } from "../../../Provider/AdminContext";
 import "./AdminAccount.css";
 function AdminAccount() {
-  const { checkAdmin } = useContext(AdminContext);
-
-  if (!checkAdmin) {
+  if (localStorage.getItem("role") !== "admin") {
     return null;
   }
   return (

@@ -9,27 +9,14 @@ import {
 import "./AdminProducts.css";
 
 /* eslint-disable react/prop-types */
-function AdminProductModal({ item, toggle, onFormChange, editForm, onSave }) {
-  //   const toggle = () => setModal(!modal);
-
-  // const onSaveEditProduct = async () => {
-  //   try {
-  //     const editResponse = await axios.patch(
-  //       `http://localhost:5000/products/${item.id}`,
-  //       {
-  //         name: editForm.name,
-  //         price: editForm.price,
-  //         image: editForm.image,
-  //         rating: editForm.rating,
-  //         category: editForm.category,
-  //         brand: editForm.brand,
-  //       }
-  //     );
-  //   } catch (err) {
-  //     console.error("Edit product Details failed:", err);
-  //   }
-  // };
-
+function AdminProductModal({
+  item,
+  toggle,
+  onFormChange,
+  editForm,
+  onSave,
+  setEditForm,
+}) {
   return (
     <div>
       <Modal
@@ -72,34 +59,65 @@ function AdminProductModal({ item, toggle, onFormChange, editForm, onSave }) {
                 ></Input>
               </div>
               <div>
-                <label>category</label>
-                <Input
+                <label>Category</label>
+                <select
                   name="category"
                   value={editForm.category}
                   onChange={onFormChange}
-                ></Input>
+                  className="form-control"
+                >
+                  <option value="">Select a Category</option>
+                  <option value="1">Sofa</option>
+                  <option value="3">Bedroom</option>
+                  <option value="2">Living</option>
+                  <option value="6">Office</option>
+                  <option value="4">Dining</option>
+                  <option value="7">Kitchen</option>
+                  <option value="5">New Arrival</option>
+                </select>
               </div>
               <div>
-                <label>rating</label>
-                <Input
+                <label>Rating</label>
+                <select
                   name="rating"
                   value={editForm.rating}
                   onChange={onFormChange}
+                  className="form-control"
+                >
+                  <option value="">Select a Rating</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+              </div>
+              <div>
+                <label>Stock</label>
+                <Input
+                  name="stock"
+                  value={editForm.stock}
+                  onChange={onFormChange}
                 ></Input>
               </div>
               <div>
-                <label>img-url</label>
+                <label>Upload Image</label>
                 <Input
+                  type="file"
                   name="image"
-                  value={editForm.image}
-                  onChange={onFormChange}
-                ></Input>
+                  required
+                  onChange={(e) =>
+                    setEditForm({ ...editForm, image: e.target.files[0] })
+                  }
+                >
+                  {" "}
+                </Input>
               </div>
             </div>
           </div>
         </ModalBody>
         <ModalFooter>
-          <Button color="primary" onClick={onSave}>
+          <Button color="primary" onClick={() => onSave()}>
             Save
           </Button>{" "}
           <Button color="secondary" onClick={toggle}>

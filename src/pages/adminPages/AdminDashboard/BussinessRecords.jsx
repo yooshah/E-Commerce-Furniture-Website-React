@@ -1,10 +1,10 @@
-/* eslint-disable react/prop-types */
-function BussinessRecords({ productData, orderData }) {
-  let revenue = 0;
+import { useSelector } from "react-redux";
 
-  if (orderData.length > 0) {
-    revenue = orderData.reduce((acc, record) => acc + record.amount, 0);
-  }
+/* eslint-disable react/prop-types */
+function BussinessRecords({ productData }) {
+  const { revenue } = useSelector((state) => state.order);
+  console.log(revenue);
+
   return (
     <div>
       <div className="card">
@@ -15,7 +15,7 @@ function BussinessRecords({ productData, orderData }) {
           <div>
             <p className="card-text text-warning">
               {" "}
-              Total Number of Products :{productData.length}
+              Number of Products Sold :{productData.length}
             </p>
             <p className="card-text text-primary">Gross Sales:{revenue} $</p>
             <p className="card-text text-Success">Profit :19%</p>

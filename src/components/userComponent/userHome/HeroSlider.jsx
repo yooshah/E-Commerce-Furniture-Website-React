@@ -1,6 +1,7 @@
 import { useState } from "react";
 import SliderImgList from "./SliderImgList";
 import "./Slider.css";
+import { useSelector } from "react-redux";
 function HeroSlider() {
   const heroSlideimg = [
     {
@@ -27,6 +28,8 @@ function HeroSlider() {
   ];
   const [activeInd, setactiveInd] = useState(0);
 
+  const { anime } = useSelector((state) => state.product);
+
   function nextSlide() {
     activeInd + 1 <= heroSlideimg.length - 1
       ? setactiveInd(activeInd + 1)
@@ -39,51 +42,53 @@ function HeroSlider() {
   }
 
   return (
-    <div>
-      <div className="container my-3">
-        <div
-          id="carouselExampleControls"
-          className="carousel slide"
-          data-bs-ride="carousel"
-        >
-          <div className="carousel-inner">
-            {heroSlideimg.map((slide, index) => (
-              <SliderImgList
-                slide={slide}
-                key={index}
-                isActive={index === activeInd}
-              />
-            ))}
+    anime && (
+      <div>
+        <div className="container my-3">
+          <div
+            id="carouselExampleControls"
+            className="carousel slide"
+            data-bs-ride="carousel"
+          >
+            <div className="carousel-inner">
+              {heroSlideimg.map((slide, index) => (
+                <SliderImgList
+                  slide={slide}
+                  key={index}
+                  isActive={index === activeInd}
+                />
+              ))}
+            </div>
+            <button
+              className="carousel-control-prev"
+              type="button"
+              data-bs-target="#carouselExampleControls"
+              data-bs-slide="prev"
+              onClick={prevSlide}
+            >
+              <span
+                className="carousel-control-prev-icon"
+                aria-hidden="true"
+              ></span>
+              <span className="visually-hidden">Previous</span>
+            </button>
+            <button
+              className="carousel-control-next"
+              type="button"
+              data-bs-target="#carouselExampleControls"
+              data-bs-slide="next"
+              onClick={nextSlide}
+            >
+              <span
+                className="carousel-control-next-icon"
+                aria-hidden="true"
+              ></span>
+              <span className="visually-hidden">Next</span>
+            </button>
           </div>
-          <button
-            className="carousel-control-prev"
-            type="button"
-            data-bs-target="#carouselExampleControls"
-            data-bs-slide="prev"
-            onClick={prevSlide}
-          >
-            <span
-              className="carousel-control-prev-icon"
-              aria-hidden="true"
-            ></span>
-            <span className="visually-hidden">Previous</span>
-          </button>
-          <button
-            className="carousel-control-next"
-            type="button"
-            data-bs-target="#carouselExampleControls"
-            data-bs-slide="next"
-            onClick={nextSlide}
-          >
-            <span
-              className="carousel-control-next-icon"
-              aria-hidden="true"
-            ></span>
-            <span className="visually-hidden">Next</span>
-          </button>
         </div>
       </div>
-    </div>
+    )
   );
 }
 

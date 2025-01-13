@@ -1,29 +1,66 @@
-import { useEffect, useState, useContext } from "react";
-import axios from "axios";
+import { useEffect, useState } from "react";
 import ProductTable from "./ProductTable";
 import AdminProductModal from "./AdminProductModal";
 import AdminAddModal from "./AdminAddModal";
-import { AdminContext } from "../../../Provider/AdminContext";
 
 import { toast, ToastContainer } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addNewPrduct,
+  deleteProduct,
+  fetchProducts,
+  updateProduct,
+} from "../../../features/productSlice";
+import SpinLoader from "../../../components/Loader/SpinLoader";
 
+const categories = [
+  { CategoryId: 1, Name: "Sofas" },
+  { CategoryId: 2, Name: "Living" },
+  { CategoryId: 3, Name: "Bedroom" },
+  { CategoryId: 4, Name: "Dining" },
+  { CategoryId: 5, Name: "New Arrivals" },
+  { CategoryId: 6, Name: "Office" },
+  { CategoryId: 7, Name: "Kitchen" },
+];
 function AdminProducts() {
   const [webProduct, setWebProduct] = useState([]);
   const [editForm, setEditForm] = useState();
   const [editItem, setEditItem] = useState();
   const [modal, setModal] = useState(false);
-  const { checkAdmin } = useContext(AdminContext);
+
+  const dispatch = useDispatch();
+  const { loading } = useSelector((state) => state.product);
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const response = await dispatch(fetchProducts()).unwrap();
+        setWebProduct(response);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchProduct();
+  }, [dispatch]);
 
   const handleEdit = (item) => {
+    const getCategoryIdByName = (categoryName) => {
+      const category = categories.find(
+        (cat) => cat.Name.toLowerCase() === categoryName.toLowerCase()
+      );
+      return category ? category.CategoryId : null;
+    };
+    const categoryId = getCategoryIdByName(item.category);
     setEditItem(item);
     setEditForm({
-      id: item.id,
+      id: item.productId,
       name: item.name,
       price: item.price,
-      image: item.image,
+      image: null,
       rating: item.rating,
-      category: item.category,
+      category: categoryId,
       brand: item.brand,
+      stock: item.stock,
     });
   };
 
@@ -32,10 +69,11 @@ function AdminProducts() {
     setEditForm({
       name: "",
       price: "",
-      image: "",
+      image: null,
       rating: "",
       category: "",
       brand: "",
+      stock: "",
     });
   };
 
@@ -45,6 +83,7 @@ function AdminProducts() {
 
   const onFormChange = (e) => {
     setEditForm({ ...editForm, [e.target.name]: e.target.value });
+    console.log(editForm);
   };
 
   const toggle = () => {
@@ -52,120 +91,109 @@ function AdminProducts() {
     setEditItem(undefined);
   };
 
-  // edit alert to ensure edit befor save
-  const editAlert = () => {
+  const editAlert = async (item) => {
     const adminConfirmed = window.confirm("Are you sure you want to edit?");
 
     if (adminConfirmed) {
-      editWebProduct();
+      await handleEditProduct(item);
     }
   };
 
-  const addAlert = () => {
+  const addAlert = async () => {
     const adminConfirm = window.confirm(
       "Are you sure you want to Add New Product?"
     );
     if (adminConfirm) {
-      addWebProduct();
-      addToggle();
+      await addProduct();
     }
   };
 
-  const deleteAlert = (item) => {
+  const deleteAlert = async (item) => {
     const adminConfirmed = window.confirm(
       ` Are You Sure ,you want delete Item ${item.name}`
     );
     if (adminConfirmed) {
-      deleteWebProduct(item.id);
-    }
-  };
-  const addWebProduct = async () => {
-    try {
-      const AddResponse = await axios.post(`http://localhost:5000/products`, {
-        ...editForm,
-        price: Number(editForm.price),
-        rating: Number(editForm.rating),
-      });
-      if (AddResponse.status >= 200) {
-        setWebProduct([...webProduct, AddResponse.data]);
-        toast.success("New Product Added ✅");
-      }
-    } catch (err) {
-      console.error("Add New Products Failed:", err);
-    }
-  };
-  const editWebProduct = async () => {
-    try {
-      const editResponse = await axios.patch(
-        `http://localhost:5000/products/${editForm.id}`,
-        {
-          name: editForm.name,
-          price: Number(editForm.price),
-          image: editForm.image,
-          rating: Number(editForm.rating),
-          category: editForm.category,
-          brand: editForm.brand,
-        }
-      );
-      if (editResponse.status >= 200) {
-        const editedlist = webProduct.map((val) => {
-          if (val.id == editResponse.data.id) {
-            return editResponse.data;
-          } else {
-            return val;
-          }
-        });
-
-        setWebProduct(editedlist);
-
-        toggle();
-      }
-    } catch (err) {
-      console.error("Edit product Details failed:", err);
+      await deleteAppProduct(item.productId);
+      toast.success("Product Deleted");
     }
   };
 
-  const deleteWebProduct = async (id) => {
-    try {
-      const deleteResponse = await axios.delete(
-        `http://localhost:5000/products/${id}`
-      );
+  const addProduct = async () => {
+    const formData = new FormData();
 
-      if (deleteResponse.status >= 200) {
-        const deletelist = webProduct.filter(
-          (val) => val.id !== deleteResponse.data.id
-        );
-        setWebProduct(deletelist);
-      }
-    } catch (err) {
-      console.error("Delete Products Failed:", err);
-    }
-  };
+    formData.append("name", editForm.name);
+    formData.append("price", parseFloat(editForm.price));
+    formData.append("brand", editForm.brand);
+    formData.append("categoryId", Number(editForm.category));
+    formData.append("stock", Number(editForm.stock));
+    formData.append("rating", Number(editForm.rating));
 
-  useEffect(() => {
-    const fetchWebProduct = async () => {
+    if (editForm.image) {
+      formData.append("image", editForm.image);
       try {
-        const response = await axios.get("http://localhost:5000/products");
+        const result = await dispatch(addNewPrduct(formData)).unwrap();
+        console.log("Product added successfully", result);
+        addToggle();
+        toggle();
 
-        if (response.status >= 200) {
-          setWebProduct(response.data);
-        }
-      } catch (err) {
-        console.error("fetch Product details failed:", err);
+        setWebProduct([...webProduct, result]);
+      } catch (error) {
+        console.error("Failed to add product ", error);
+        // Optionally show an error notification
       }
-    };
-    fetchWebProduct();
-  }, []);
+    } else {
+      toast.error("Image is Required");
+    }
+  };
 
-  if (!webProduct.length) {
-    return null;
-  }
-  if (!checkAdmin) {
-    return null;
+  const deleteAppProduct = async (deleteId) => {
+    if (deleteId !== null) {
+      try {
+        const result = await dispatch(deleteProduct(deleteId)).unwrap();
+        setWebProduct(webProduct.filter((item) => item.productId !== result));
+      } catch (error) {
+        toast.error(error);
+      }
+    }
+  };
+
+  const handleEditProduct = async () => {
+    const formData = new FormData();
+
+    formData.append("name", editForm.name);
+    formData.append("price", parseFloat(editForm.price));
+    formData.append("brand", editForm.brand);
+    formData.append("categoryId", Number(editForm.category));
+    formData.append("stock", Number(editForm.stock));
+    formData.append("rating", Number(editForm.rating));
+    if (editForm.image) {
+      formData.append("image", editForm.image);
+    } else {
+      formData.append("image", null);
+    }
+
+    try {
+      await dispatch(updateProduct({ id: editForm.id, formData })).unwrap();
+
+      const response = await dispatch(fetchProducts()).unwrap();
+      setWebProduct(response);
+
+      toggle();
+    } catch (error) {
+      console.log(error);
+    }
+
+    console.log(webProduct);
+  };
+
+  console.log(webProduct);
+
+  if (loading) {
+    return <SpinLoader />;
   }
 
   return (
-    <div>
+    <div className="Product-Container">
       <ToastContainer />
       <ProductTable
         products={webProduct}
@@ -178,6 +206,7 @@ function AdminProducts() {
           item={editItem}
           toggle={toggle}
           editForm={editForm}
+          setEditForm={setEditForm}
           onFormChange={onFormChange}
           onSave={editAlert}
         />
@@ -188,6 +217,7 @@ function AdminProducts() {
           toggle={addToggle}
           onFormChange={onFormChange}
           editForm={editForm}
+          setEditForm={setEditForm}
           onAdd={addAlert}
         />
       )}

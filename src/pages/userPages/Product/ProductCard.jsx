@@ -4,15 +4,18 @@ import "./Product.css";
 import ProductModal from "./ProductModal";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts } from "../../../features/productSlice";
+import SpinLoader from "../../../components/Loader/SpinLoader";
+import { fetchUserCart } from "../../../features/cartSlice";
 
 function ProductCard() {
   const [previewProduct, setPreviewProduct] = useState(null);
 
   const dispatch = useDispatch();
 
-  const { products } = useSelector((state) => state.product);
+  const { products, loading } = useSelector((state) => state.product);
   useEffect(() => {
     dispatch(fetchProducts()).unwrap();
+    dispatch(fetchUserCart());
   }, [dispatch]);
 
   console.log(products);
@@ -24,6 +27,9 @@ function ProductCard() {
     setPreviewProduct(null);
   };
 
+  if (loading) {
+    return <SpinLoader />;
+  }
   return (
     <>
       <div className="container">

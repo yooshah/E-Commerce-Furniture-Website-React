@@ -1,10 +1,9 @@
-import { useContext } from "react";
-import { AdminContext } from "../../../Provider/AdminContext";
 import "./AdminFooter.css";
 function AdminFooter() {
-  const { checkAdmin } = useContext(AdminContext);
-
-  if (!checkAdmin) {
+  if (location.pathname == "/login" || location.pathname == "/signup") {
+    return null;
+  }
+  if (localStorage.getItem("role") == "user") {
     return null;
   }
   return (

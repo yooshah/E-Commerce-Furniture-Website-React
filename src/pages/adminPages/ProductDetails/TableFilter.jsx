@@ -11,8 +11,6 @@ const initialValue = {
 function TableFilter({ filterProduct }) {
   const [filterData, setFilterData] = useState(initialValue);
 
-  //   const allProoduct = {};
-
   const handleFilter = (e) => {
     setFilterData({ ...filterData, [e.target.name]: e.target.value });
   };

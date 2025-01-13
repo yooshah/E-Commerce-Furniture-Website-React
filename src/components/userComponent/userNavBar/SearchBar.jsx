@@ -38,11 +38,6 @@ function SearchBar() {
     setDropdownOpen(true);
   };
 
-  // const handleChange = (e) => {
-  //   setFormData(e.target.value);
-  //   setDropdownOpen(true);
-  //   setFilterItems(filteredProducts);
-  // };
   const handleSubmit = (e) => {
     e.preventDefault();
     setDropdownOpen(false);
@@ -51,9 +46,6 @@ function SearchBar() {
   };
 
   const handleClick = (id) => {
-    // const clickItem = products.find((val) => val.id == id);
-    // setFilterItems([clickItem]);
-    // setFormData("");
     console.log(id);
 
     dispatch(fetchProductById(id));

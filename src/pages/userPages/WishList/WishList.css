@@ -1,0 +1,41 @@
+.Wishtable-images {
+  height: 6.4rem;
+  width: 6.4rem;
+}
+
+.wishlist-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px; /* Adjust height as needed */
+  background-color: #f8f9fa; /* Light gray background */
+  border-bottom: 2px solid #dee2e6; /* Subtle border at the bottom */
+  margin-bottom: 20px; /* Space below the header */
+}
+
+.wishlist-title {
+  font-size: 2rem; /* Adjust font size */
+  font-weight: bold; /* Bold text */
+  color: #343a40; /* Dark gray text */
+  text-align: center; /* Center text */
+  font-family: "Arial", sans-serif; /* Clean font */
+}
+
+.wishList-container {
+  min-height: 32.9rem;
+}
+
+.wish-image {
+  height: 6.4rem;
+  width: 6.4rem;
+}
+
+td,
+th {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.delete-btn {
+  cursor: pointer;
+}

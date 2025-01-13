@@ -1,24 +1,20 @@
 import "./NavBar.css";
 import SearchBar from "./SearchBar";
 import { Link, useNavigate } from "react-router-dom";
-import { useContext, useEffect } from "react";
-import { ProductContext } from "../../../Provider/ProductContext";
-import { ToastContainer, toast } from "react-toastify";
+import { useEffect } from "react";
+
+import { ToastContainer } from "react-toastify";
 import { useLocation } from "react-router-dom";
-import { AdminContext } from "../../../Provider/AdminContext";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUserCart } from "../../../features/cartSlice";
+import { cartCleaner, fetchUserCart } from "../../../features/cartSlice";
 import {
   fetchProductByCategory,
   fetchProducts,
 } from "../../../features/productSlice";
-// import { Login } from "@mui/icons-material";
+
 import { tokenLogin, logout } from "../../../features/AuthSlice";
 
 function NavBar() {
-  const { user, initialCartItems, logOut, setFilterItems } =
-    useContext(ProductContext);
-  const { checkAdmin } = useContext(AdminContext);
   const navigate = useNavigate();
 
   const location = useLocation();
@@ -29,30 +25,24 @@ function NavBar() {
 
   console.log(isLoggedIn);
 
-  console.log(cart);
-
   const isHomePage = location.pathname === "/";
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchUserCart());
-  }, [dispatch]);
-  console.log(cart);
-  const token = localStorage.getItem("token");
-  useEffect(() => {
+    const token = localStorage.getItem("token");
+
     if (token) {
       dispatch(tokenLogin());
     }
-  }, [dispatch, token]);
 
+    dispatch(fetchUserCart());
+  }, [dispatch]);
   const handleLogout = () => {
     dispatch(logout());
+    dispatch(cartCleaner());
     localStorage.clear();
-    navigate("/");
+    setTimeout(() => navigate("/login"), 500);
     return;
-  };
-  const handleClick = () => {
-    setFilterItems([]);
   };
 
   const handleCategory = (categoryId) => {
@@ -74,7 +64,11 @@ function NavBar() {
   if (cartNumber == 0) {
     cartNumber = null;
   }
-  if (checkAdmin) {
+
+  if (localStorage.getItem("role") == "admin") {
+    return null;
+  }
+  if (location.pathname == "/login" || location.pathname == "/signup") {
     return null;
   }
   return (
@@ -110,7 +104,6 @@ function NavBar() {
                   to="/"
                   className="nav-link cart-icon "
                   aria-current="page"
-                  onClick={handleClick}
                 >
                   <img src="src\components\assets\home.svg" alt="home icon" />
                 </Link>
@@ -120,9 +113,20 @@ function NavBar() {
                   to="/store"
                   className="nav-link cart-icon "
                   aria-current="page"
-                  onClick={handleClick}
                 >
                   <img src="src\components\assets\store.svg" alt="store icon" />
+                </Link>
+              </li>
+              <li className="nav-item nav-icons position-relative">
+                <Link
+                  to="/favorite"
+                  className="nav-link cart-icon "
+                  aria-current="page"
+                >
+                  <img
+                    src="src\components\assets\favorite.svg"
+                    alt="WishList icon"
+                  />
                 </Link>
               </li>
               <li className="nav-item nav-icons position-relative">
@@ -130,7 +134,7 @@ function NavBar() {
                   to="/cart"
                   className="nav-link cart-icon "
                   aria-current="page"
-                  onClick={handleClick}
+                  // onClick={handleClick}
                 >
                   <img
                     src="src\components\assets\shopping.svg"
@@ -145,10 +149,10 @@ function NavBar() {
               </li>
               <li className="nav-item nav-icons position-relative">
                 <Link
-                  to="/shipping"
+                  to="/orders"
                   className="nav-link cart-icon "
                   aria-current="page"
-                  onClick={handleClick}
+                  // onClick={handleClick}
                 >
                   <img
                     src="src\components\assets\shipping.svg"
@@ -170,7 +174,7 @@ function NavBar() {
                       to="/login"
                       className="nav-link cart-icon "
                       aria-current="page"
-                      onClick={handleClick}
+                      // onClick={handleClick}
                     >
                       <img
                         src="src\components\assets\person.svg"

@@ -1,95 +1,59 @@
-// import { useContext, useEffect } from "react";
-// import { ProductContext } from "../../../Provider/ProductContext";
-import { DeleteCartItem } from "../../../features/cartSlice";
+import { ToastContainer, toast } from "react-toastify";
+import {
+  DecreaseQuantity,
+  DeleteCartItem,
+  fetchUserCart,
+  IncreseQuatinty,
+} from "../../../features/cartSlice";
 
 import CartList from "./CartList";
-// import axios from "axios";
-// import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import "./Cart.css";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 function Cart() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const removeCartItem = (id) => {
     console.log(id);
     dispatch(DeleteCartItem(id));
   };
-  //   const { initialCartItems, user } = useContext(ProductContext);
-  // const { initialCartItems, setInitialCartItems, setAmount, amount } =
-  //   useContext(ProductContext);
-  // const navigate = useNavigate();
-  // useEffect(() => {
-  //   const totalAmount = Math.floor(
-  //     initialCartItems.reduce(
-  //       (acc, val) => acc + val.item.price * val.quantity,
-  //       0
-  //     )
-  //   );
-  //   setAmount(totalAmount);
-  // }, [initialCartItems, setAmount]);
 
-  // console.log(initialCartItems);
-  // const handleRemove = async (id) => {
-  //   try {
-  //     const response = await axios.delete(`http://localhost:5000/cart/${id}`);
+  const incrementQuantity = async (id) => {
+    console.log(id);
+    try {
+      await dispatch(IncreseQuatinty(id)).unwrap();
+    } catch (error) {
+      toast.warning(error);
+    }
+  };
 
-  //     console.log(response);
-
-  //     // Update the local state to remove the item
-  //     setInitialCartItems((prevItems) =>
-  //       prevItems.filter((item) => item.id !== id)
-  //     );
-  //   } catch (error) {
-  //     console.error("Error removing item from cart:", error);
-  //   }
-  // };
+  const decrementQuantity = (id) => {
+    console.log(id);
+    dispatch(DecreaseQuantity(id));
+  };
+  useEffect(() => {
+    dispatch(fetchUserCart());
+  }, [dispatch]);
 
   const { cart } = useSelector((state) => state.cart);
-  // const cartNumber = cart.length;
+
   console.log(cart);
+  const handleProceed = () => {
+    if (cart.length > 0) {
+      navigate("/payment");
+    }
+  };
   return (
-    // <div className="container">
-    //   {cartNumber > 0 ? (
-    //     <div>
-    //       <h2 className="my-4 text-success">Your Cart</h2>
-    //       <div className="row justify-content-center">
-    //         {cart.map((item, ind) => (
-    //           <div className="col-md-4 mx-4" key={ind}>
-    //             <CartList
-    //               item={item}
-    //               //  handleRemove={handleRemove}
-    //             />
-    //           </div>
-    //         ))}
-    //       </div>
-    //       <div>
-    //         {" "}
-    //         {/* <h4>
-    //           total Amount : <span className="text-success "> {amount}</span>
-    //         </h4>{" "}
-    //         <button className="btn-success" onClick={() => navigate("/order")}>
-    //           Payment
-    //         </button> */}
-    //       </div>
-    //     </div>
-    //   ) : (
-    //     <div className=" cart-container">
-    //       <h2 className="my-4 text-success">Your Cart is empty</h2>
-    //     </div>
-    //   )}
-    // </div>
     <>
-      <div className="modal-dialog modal-lg">
+      <div className="modal-dialog modal-lg cart-container">
         <div className="modal-content">
           <div className="modal-header">
+            <ToastContainer />
             <h5 className="modal-title" id="cartModalLabel">
               Your Cart
             </h5>
-            {/* <button
-              type="button"
-              className="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button> */}
           </div>
 
           <div className="modal-body">
@@ -111,9 +75,8 @@ function Cart() {
                       key={item.cartItemId}
                       item={item}
                       removeCart={removeCartItem}
-                      // decrementQuantity={decrementQuantity}
-                      // incrementQuantity={incrementQuantity}
-                      // removeCart={removeCart}
+                      decrementQuantity={decrementQuantity}
+                      incrementQuantity={incrementQuantity}
                     />
                   ))}
                 </tbody>
@@ -123,12 +86,10 @@ function Cart() {
           <div className="modal-footer">
             <button
               type="button"
-              className="btn btn-secondary"
-              data-bs-dismiss="modal"
+              className="btn btn-primary "
+              disabled={cart.length <= 0 || cart == undefined || cart == null}
+              onClick={handleProceed}
             >
-              Close
-            </button>
-            <button type="button" className="btn btn-primary">
               Proceed to Checkout
             </button>
           </div>

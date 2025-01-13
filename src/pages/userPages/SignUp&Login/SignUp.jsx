@@ -67,53 +67,6 @@ function SignUp() {
       }
     },
   });
-  //   async (values) => {
-  //     const response = await verifyDuplicateAccount(values.email);
-
-  //     if (response.data.length > 0) {
-  //       toast.error("Email already registered");
-  //       return;
-  //     }
-
-  //     saveCredentials({
-  //       name: values.name,
-  //       email: values.email,
-  //       password: values.password,
-  //       state: "active",
-  //     }).then(() => {
-  //       toast.success("Registration Successful");
-  //       navigate("/login");
-  //     });
-  //   },
-  // });
-
-  // Check for duplicate email
-  // async function verifyDuplicateAccount(email) {
-  //   try {
-  //     const response = await axios.get(
-  //       `http://localhost:5000/users?email=${email}`
-  //     );
-  //     return response;
-  //   } catch (error) {
-  //     console.error("Error checking duplicate email:", error);
-  //   }
-  // }
-
-  // // Save user credentials
-  // async function saveCredentials(values) {
-  //   try {
-  //     const response = await axios.post("http://localhost:5000/users", values);
-
-  //     if (response.status === 201) {
-  //       return response;
-  //     } else {
-  //       toast.error("Failed to register user");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error posting data:", error);
-  //     toast.error("An error occurred. Please try again.");
-  //   }
-  // }
 
   return (
     <div className="container">

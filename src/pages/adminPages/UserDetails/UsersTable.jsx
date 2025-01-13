@@ -1,42 +1,71 @@
 import { useState } from "react";
 import OrderModal from "./OrderModal";
 import "./UserDetails.css";
-import axios from "axios";
+
 import { Button } from "reactstrap";
+import { useDispatch } from "react-redux";
+import {
+  blockOrUnnblockUser,
+  getUserOrderDetail,
+} from "../../../features/userSlice";
+import { ToastContainer, toast } from "react-toastify";
 /* eslint-disable react/prop-types */
 
-function UsersTable({ usersData, handleBlock, handleUnBlock }) {
+function UsersTable({ usersData, setUsersData }) {
   const [orderModal, setOrderModal] = useState(false);
   const [orderDetails, setOrderDetails] = useState();
+
+  const dispach = useDispatch();
 
   const orderToggle = () => {
     setOrderModal(!orderModal);
     setOrderDetails(undefined);
   };
 
-  const fetchOrderdetails = async (userId) => {
-    try {
-      const orderResponse =
-        await axios.get(`http://localhost:5000/order?userId=${userId}
-            `);
-      if (orderResponse.status >= 200) {
-        if (orderResponse.data.length) {
-          setOrderDetails(orderResponse.data[0]);
-          setOrderModal(true);
+  const handleBlockOrUnblock = async (userId) => {
+    const adminConfirmed = window.confirm(
+      "Are you sure you want to Change User Account Status?"
+    );
+
+    if (adminConfirmed) {
+      try {
+        const response = await dispach(blockOrUnnblockUser(userId)).unwrap();
+
+        if (response == true) {
+          setUsersData((prevData) =>
+            prevData.map((user) =>
+              user.id === userId
+                ? { ...user, accountStatus: !user.accountStatus }
+                : user
+            )
+          );
         }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (err) {
-      console.error("User Order Detail Fetch Error: ", err);
     }
   };
-  if (orderDetails) {
-    console.log(orderDetails);
-  }
+  const handleToast = () => {
+    orderToggle();
+    toast.success("order Status Changed✅");
+  };
+
+  const handleUserOrder = async (id) => {
+    try {
+      const response = await dispach(getUserOrderDetail(id)).unwrap();
+
+      setOrderDetails(response);
+      setOrderModal(true);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <>
       <h3 className="py-5">Users Details</h3>
       <div className="product-table">
+        <ToastContainer />
         <table className="table table-ligth ">
           <thead className="thead-dark">
             <tr>
@@ -59,7 +88,7 @@ function UsersTable({ usersData, handleBlock, handleUnBlock }) {
                   <div className="visble-poniter">
                     <span
                       className="visble-eye "
-                      onClick={() => fetchOrderdetails(data.id)}
+                      onClick={() => handleUserOrder(data.id)}
                     >
                       View{" "}
                       <img
@@ -70,29 +99,22 @@ function UsersTable({ usersData, handleBlock, handleUnBlock }) {
                   </div>
                 </td>
                 <td>
-                  {data.state == "active" ? (
-                    <Button color="danger" onClick={() => handleBlock(data.id)}>
+                  {data.accountStatus == true ? (
+                    <Button
+                      color="danger"
+                      onClick={() => handleBlockOrUnblock(data.id)}
+                    >
                       Block
                     </Button>
                   ) : (
                     <Button
                       color="success"
-                      onClick={() => handleUnBlock(data.id)}
+                      onClick={() => handleBlockOrUnblock(data.id)}
                     >
                       unBlock
                     </Button>
                   )}
                 </td>
-                {/* <td>
-                  {" "}
-                  <Button color="danger">
-                    delete{" "}
-                    <img
-                      src="src\pages\adminPages\ProductDetails\adminProductassets\delete.svg"
-                      alt="delete"
-                    />
-                  </Button>
-                </td> */}
               </tr>
             ))}
           </tbody>
@@ -102,6 +124,7 @@ function UsersTable({ usersData, handleBlock, handleUnBlock }) {
         toggle={orderToggle}
         userOrder={orderDetails}
         modal={orderModal}
+        toastmessage={handleToast}
       />
     </>
   );

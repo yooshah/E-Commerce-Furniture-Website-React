@@ -2,7 +2,7 @@
 function Records({ userData }) {
   let blockedData = 0;
 
-  blockedData = userData.filter((data) => data.state == "block").length;
+  blockedData = userData.filter((data) => data.accountStatus == false).length;
 
   return (
     <div>
