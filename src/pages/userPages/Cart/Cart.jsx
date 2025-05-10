@@ -1,68 +1,101 @@
-import { useContext, useEffect } from "react";
-import { ProductContext } from "../../../Provider/ProductContext";
+import { ToastContainer, toast } from "react-toastify";
+import {
+  DecreaseQuantity,
+  DeleteCartItem,
+  fetchUserCart,
+  IncreseQuatinty,
+} from "../../../features/cartSlice";
+
 import CartList from "./CartList";
-import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import "./Cart.css";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 function Cart() {
-  //   const { initialCartItems, user } = useContext(ProductContext);
-  const { initialCartItems, setInitialCartItems, setAmount, amount } =
-    useContext(ProductContext);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  useEffect(() => {
-    const totalAmount = Math.floor(
-      initialCartItems.reduce(
-        (acc, val) => acc + val.item.price * val.quantity,
-        0
-      )
-    );
-    setAmount(totalAmount);
-  }, [initialCartItems, setAmount]);
+  const removeCartItem = (id) => {
+    console.log(id);
+    dispatch(DeleteCartItem(id));
+  };
 
-  console.log(initialCartItems);
-  const handleRemove = async (id) => {
+  const incrementQuantity = async (id) => {
+    console.log(id);
     try {
-      const response = await axios.delete(`http://localhost:5000/cart/${id}`);
-
-      console.log(response);
-
-      // Update the local state to remove the item
-      setInitialCartItems((prevItems) =>
-        prevItems.filter((item) => item.id !== id)
-      );
+      await dispatch(IncreseQuatinty(id)).unwrap();
     } catch (error) {
-      console.error("Error removing item from cart:", error);
+      toast.warning(error);
     }
   };
 
+  const decrementQuantity = (id) => {
+    console.log(id);
+    dispatch(DecreaseQuantity(id));
+  };
+  useEffect(() => {
+    dispatch(fetchUserCart());
+  }, [dispatch]);
+
+  const { cart } = useSelector((state) => state.cart);
+
+  console.log(cart);
+  const handleProceed = () => {
+    if (cart.length > 0) {
+      navigate("/payment");
+    }
+  };
   return (
-    <div className="container">
-      {amount > 0 ? (
-        <div>
-          <h2 className="my-4 text-success">Your Cart</h2>
-          <div className="row justify-content-center">
-            {initialCartItems.map((item, ind) => (
-              <div className="col-md-4 mx-4" key={ind}>
-                <CartList item={item} handleRemove={handleRemove} />
-              </div>
-            ))}
+    <>
+      <div className="modal-dialog modal-lg cart-container">
+        <div className="modal-content">
+          <div className="modal-header">
+            <ToastContainer />
+            <h5 className="modal-title" id="cartModalLabel">
+              Your Cart
+            </h5>
           </div>
-          <div>
-            {" "}
-            <h4>
-              total Amount : <span className="text-success "> {amount}</span>
-            </h4>{" "}
-            <button className="btn-success" onClick={() => navigate("/order")}>
-              Payment
+
+          <div className="modal-body">
+            <div className="p-4 overflow-x-auto">
+              <table className="table table-bordered table-striped text-center">
+                <thead className="table-light">
+                  <tr>
+                    <th>Image</th>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                    <th>Remove</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {cart.map((item) => (
+                    <CartList
+                      key={item.cartItemId}
+                      item={item}
+                      removeCart={removeCartItem}
+                      decrementQuantity={decrementQuantity}
+                      incrementQuantity={incrementQuantity}
+                    />
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div className="modal-footer">
+            <button
+              type="button"
+              className="btn btn-primary "
+              disabled={cart.length <= 0 || cart == undefined || cart == null}
+              onClick={handleProceed}
+            >
+              Proceed to Checkout
             </button>
           </div>
         </div>
-      ) : (
-        <div className=" cart-container">
-          <h2 className="my-4 text-success">Your Cart is empty</h2>
-        </div>
-      )}
-    </div>
+      </div>
+    </>
   );
 }
 

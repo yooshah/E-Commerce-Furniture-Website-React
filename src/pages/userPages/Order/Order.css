@@ -1,3 +1,71 @@
 .order-container {
-  height: 45rem;
+  min-height: 39rem;
+  display: flex;
+  flex-direction: column; /* Stack orders vertically */
+  gap: 1rem; /* Add space between orders */
+  margin-top: 1rem;
+}
+
+/* Order Card Styling */
+.order-card {
+  width: 100%; /* Ensure cards span full width */
+  margin-bottom: 1rem; /* Add space between cards */
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+}
+
+/* Order Header */
+.order-header h5 {
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+.order-header p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* Order Items Section */
+.order-items {
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+/* Individual Order Item */
+.order-item {
+  display: flex;
+  align-items: center;
+}
+
+.item-image img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.item-details {
+  font-size: 0.9rem;
+}
+
+.item-details h6 {
+  font-size: 1rem;
+  margin-bottom: 5px;
+}
+
+.item-details p {
+  margin: 0;
+  color: #666;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .order-header p,
+  .item-details p {
+    font-size: 0.8rem;
+  }
 }

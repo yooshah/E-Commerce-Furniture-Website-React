@@ -1,81 +1,30 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import UsersTable from "./UsersTable";
-import { useContext } from "react";
-import { AdminContext } from "../../../Provider/AdminContext";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllUsers } from "../../../features/userSlice";
 function UserDetails() {
   const [usersData, setUsersData] = useState([]);
-  const { checkAdmin } = useContext(AdminContext);
 
-  const handleBlock = async (userId) => {
-    try {
-      const blockresponse = await axios.patch(
-        `http://localhost:5000/users/${userId}`,
-        { state: "block" }
-      );
+  const { users } = useSelector((state) => state.user);
 
-      if (blockresponse.status >= 200) {
-        const blockedData = usersData.map((data) => {
-          if (data.id == userId) {
-            return blockresponse.data;
-          } else {
-            return data;
-          }
-        });
-
-        setUsersData(blockedData);
-      }
-    } catch (err) {
-      console.error("Error ,user Blocking Failed:", err);
-    }
-  };
-  const handleUnBlock = async (userId) => {
-    try {
-      const blockresponse = await axios.patch(
-        `http://localhost:5000/users/${userId}`,
-        { state: "active" }
-      );
-
-      if (blockresponse.status >= 200) {
-        const blockedData = usersData.map((data) => {
-          if (data.id == userId) {
-            return blockresponse.data;
-          } else {
-            return data;
-          }
-        });
-        setUsersData(blockedData);
-      }
-    } catch (err) {
-      console.error("Error ,user Blocking Failed:", err);
-    }
-  };
+  const dispatch = useDispatch();
+  console.log(users);
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchUsers = async () => {
       try {
-        const usersResponse = await axios.get("http://localhost:5000/users");
-        if (usersResponse.status >= 200) {
-          setUsersData(usersResponse.data);
-        }
-      } catch (err) {
-        console.error("Users Data Fetch Error", err);
+        const response = await dispatch(getAllUsers()).unwrap();
+        setUsersData(response);
+      } catch (error) {
+        console.log(error);
       }
     };
-    fetchUserData();
-  }, []);
-
-  if (!checkAdmin) {
-    return null;
-  }
+    fetchUsers();
+  }, [dispatch]);
 
   return (
-    <div>
-      <UsersTable
-        usersData={usersData}
-        handleBlock={handleBlock}
-        handleUnBlock={handleUnBlock}
-      />
+    <div className="user-container">
+      <UsersTable usersData={usersData} setUsersData={setUsersData} />
     </div>
   );
 }

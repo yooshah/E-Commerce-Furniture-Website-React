@@ -1,0 +1,109 @@
+/* .text-font {
+  font-family: futura-pt, Tahoma, Geneva, Verdana, Arial, sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.156rem;
+  font-size: 1.125rem;
+}
+.text-price {
+  padding: 0 0.625rem;
+  font-family: futura-pt, Tahoma, Geneva, Verdana, Arial, sans-serif;
+  font-style: normal;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 0.813rem;
+  letter-spacing: 1.6px;
+}
+.text-descriptions {
+  font-family: futura-pt, Tahoma, Geneva, Verdana, Arial, sans-serif;
+  font-style: normal;
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.125rem;
+  margin: 0.313rem 0 0.938rem;
+  padding: 0 0.625rem;
+}
+.button-color {
+  color: #4e4e4e;
+  border-color: #4e4e4e;
+}
+.button-order {
+  font-family: futura-pt, Tahoma, Geneva, Verdana, Arial, sans-serif;
+  font-style: normal;
+  font-size: 0.75rem;
+  font-weight: 700;
+  background-color: hsl(90, 40%, 50%);
+  color: white;
+} */
+
+/* Container styles */
+.address-list-container {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.address-list-container h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Address list styles */
+.address-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Address card styles */
+.address-card {
+  border: 1px solid #ccc;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #fff;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.address-card:hover {
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.address-card.selected {
+  background-color: #f0f8ff;
+}
+
+/* Summary styles */
+.address-summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.summary-details {
+  flex: 1;
+  font-weight: bold;
+  color: #555;
+}
+
+.toggle-button {
+  padding: 5px 10px;
+  cursor: pointer;
+  border: none;
+  background-color: #198754;
+  color: white;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.toggle-button:hover {
+  background-color: #0056b3;
+}
+
+/* Expanded details styles */
+.address-details {
+  margin-top: 10px;
+  color: #555;
+}
+
+.address-details p {
+  margin: 5px 0;
+}

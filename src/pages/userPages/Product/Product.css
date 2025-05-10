@@ -50,3 +50,13 @@
 .carrd-text:hover {
   text-decoration: underline;
 }
+
+.icon {
+  /* Initial fill color */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: fill 0.3s ease; /* Optional: smooth color transition */
+}
+
+.icon:hover {
+  fill: #ff385c; /* The same color on hover, you can change this if you want a different color */
+}

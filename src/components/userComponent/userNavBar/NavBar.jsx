@@ -1,48 +1,74 @@
 import "./NavBar.css";
 import SearchBar from "./SearchBar";
 import { Link, useNavigate } from "react-router-dom";
-import { useContext } from "react";
-import { ProductContext } from "../../../Provider/ProductContext";
-import { ToastContainer, toast } from "react-toastify";
+import { useEffect } from "react";
+
+import { ToastContainer } from "react-toastify";
 import { useLocation } from "react-router-dom";
-import { AdminContext } from "../../../Provider/AdminContext";
+import { useDispatch, useSelector } from "react-redux";
+import { cartCleaner, fetchUserCart } from "../../../features/cartSlice";
+import {
+  fetchProductByCategory,
+  fetchProducts,
+} from "../../../features/productSlice";
+
+import { tokenLogin, logout } from "../../../features/AuthSlice";
 
 function NavBar() {
-  const { user, initialCartItems, logOut, setFilterItems, products } =
-    useContext(ProductContext);
-  const { checkAdmin } = useContext(AdminContext);
   const navigate = useNavigate();
 
   const location = useLocation();
 
-  const isHomePage = location.pathname === "/";
+  const { cart } = useSelector((state) => state.cart);
 
+  const { isLoggedIn } = useSelector((state) => state.auth);
+
+  console.log(isLoggedIn);
+
+  const isHomePage = location.pathname === "/";
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      dispatch(tokenLogin());
+    }
+
+    dispatch(fetchUserCart());
+  }, [dispatch]);
   const handleLogout = () => {
-    logOut();
-    toast.success("Logout");
-    navigate("/");
+    dispatch(logout());
+    dispatch(cartCleaner());
+    localStorage.clear();
+    setTimeout(() => navigate("/login"), 500);
     return;
   };
-  const handleClick = () => {
-    setFilterItems([]);
+
+  const handleCategory = (categoryId) => {
+    console.log(categoryId);
+    try {
+      dispatch(fetchProductByCategory(categoryId)).unwrap();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const handleCategory = (category) => {
-    const catgorisedItem = products.filter((val) => val.category == category);
-    setFilterItems(catgorisedItem);
-  };
-
-  const handleLogo = () => {
-    setFilterItems([]);
+  const handleLogo = async () => {
+    await dispatch(fetchProducts());
     navigate("/");
   };
 
-  let cartNumber = initialCartItems.length;
-  
+  let cartNumber = cart.length;
+
   if (cartNumber == 0) {
     cartNumber = null;
   }
-  if (checkAdmin) {
+
+  if (localStorage.getItem("role") == "admin") {
+    return null;
+  }
+  if (location.pathname == "/login" || location.pathname == "/signup") {
     return null;
   }
   return (
@@ -78,7 +104,6 @@ function NavBar() {
                   to="/"
                   className="nav-link cart-icon "
                   aria-current="page"
-                  onClick={handleClick}
                 >
                   <img src="src\components\assets\home.svg" alt="home icon" />
                 </Link>
@@ -88,9 +113,20 @@ function NavBar() {
                   to="/store"
                   className="nav-link cart-icon "
                   aria-current="page"
-                  onClick={handleClick}
                 >
                   <img src="src\components\assets\store.svg" alt="store icon" />
+                </Link>
+              </li>
+              <li className="nav-item nav-icons position-relative">
+                <Link
+                  to="/favorite"
+                  className="nav-link cart-icon "
+                  aria-current="page"
+                >
+                  <img
+                    src="src\components\assets\favorite.svg"
+                    alt="WishList icon"
+                  />
                 </Link>
               </li>
               <li className="nav-item nav-icons position-relative">
@@ -98,7 +134,7 @@ function NavBar() {
                   to="/cart"
                   className="nav-link cart-icon "
                   aria-current="page"
-                  onClick={handleClick}
+                  // onClick={handleClick}
                 >
                   <img
                     src="src\components\assets\shopping.svg"
@@ -113,10 +149,10 @@ function NavBar() {
               </li>
               <li className="nav-item nav-icons position-relative">
                 <Link
-                  to="/shipping"
+                  to="/orders"
                   className="nav-link cart-icon "
                   aria-current="page"
-                  onClick={handleClick}
+                  // onClick={handleClick}
                 >
                   <img
                     src="src\components\assets\shipping.svg"
@@ -125,7 +161,7 @@ function NavBar() {
                 </Link>
               </li>
               <li className="nav-item nav-icons position-relative">
-                {user ? (
+                {isLoggedIn ? (
                   <div className="nav-link cart-icon " onClick={handleLogout}>
                     <img
                       src="src\components\assets\logout.svg"
@@ -138,7 +174,7 @@ function NavBar() {
                       to="/login"
                       className="nav-link cart-icon "
                       aria-current="page"
-                      onClick={handleClick}
+                      // onClick={handleClick}
                     >
                       <img
                         src="src\components\assets\person.svg"
@@ -155,15 +191,13 @@ function NavBar() {
 
       {isHomePage && (
         <div className="menu-tab">
-          <span onClick={() => handleCategory("Living")}>Living</span>
-          <span onClick={() => handleCategory("Dining")}>Dining</span>
-          <span onClick={() => handleCategory("Bedroom")}>Bedroom</span>
-          <span onClick={() => handleCategory("Sofas")}>Sofas</span>
-          <span onClick={() => handleCategory("Kitchen")}>Kitchen</span>
-          <span onClick={() => handleCategory("Office")}>Office</span>
-          <span onClick={() => handleCategory("New Arrivals")}>
-            New Arrival
-          </span>
+          <span onClick={() => handleCategory(2)}>Living</span>
+          <span onClick={() => handleCategory(4)}>Dining</span>
+          <span onClick={() => handleCategory(3)}>Bedroom</span>
+          <span onClick={() => handleCategory(1)}>Sofas</span>
+          <span onClick={() => handleCategory(7)}>Kitchen</span>
+          <span onClick={() => handleCategory(6)}>Office</span>
+          <span onClick={() => handleCategory(5)}>New Arrival</span>
         </div>
       )}
     </>

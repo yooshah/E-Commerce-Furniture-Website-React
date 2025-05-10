@@ -1,5 +1,3 @@
-import { useContext } from "react";
-import { AdminContext } from "../../../Provider/AdminContext";
 import "./AdminNavbar.css";
 
 import Dropdown from "@mui/joy/Dropdown";
@@ -8,16 +6,22 @@ import MenuButton from "@mui/joy/MenuButton";
 import MenuItem from "@mui/joy/MenuItem";
 import Sidebar from "./SideBar";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
 function AdminNavbar() {
-  const { handleLogout, checkAdmin } = useContext(AdminContext);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { logout } = useSelector((state) => state.auth);
 
-  const handleClick = () => {
-    handleLogout();
-    navigate("./login");
+  const handleLogeout = () => {
+    localStorage.clear();
+    setTimeout(() => navigate("/login"), 500);
+    dispatch(logout());
+
+    return;
   };
-  if (!checkAdmin) {
+
+  if (localStorage.getItem("role") != "admin") {
     return null;
   }
 
@@ -49,7 +53,7 @@ function AdminNavbar() {
               Hi !{localStorage.getItem("name")}
             </MenuItem>
             {/* <MenuItem>My account</MenuItem> */}
-            <MenuItem onClick={handleClick}>Logout</MenuItem>
+            <MenuItem onClick={handleLogeout}>Logout</MenuItem>
           </Menu>
         </Dropdown>
       </div>

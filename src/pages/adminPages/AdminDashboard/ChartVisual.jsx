@@ -1,63 +1,26 @@
 import { Bar } from "react-chartjs-2";
-import { Chart, registerables } from "chart.js"; // Ensure you import Chart and registerables
+import { Chart, registerables } from "chart.js";
+import { useSelector } from "react-redux";
 import "./AdminDashboard.css";
+
 Chart.register(...registerables);
 
-/* eslint-disable react/prop-types */
+function ChartVisual() {
+  // Get revenueRecord from Redux store
+  const { revenueRecord } = useSelector((state) => state.order);
 
-function ChartVisual({ orders }) {
-  const today = new Date();
-  const todayDateString = today.toLocaleDateString("en-GB");
-  const [thisday, thismonth, thisyear] = todayDateString.split("/");
-
-  let salesData = {
-    today: 0,
-    week: 0,
-    month: 0,
-    year: 0,
-  };
-
-  try {
-    const orderDate = orders.map((order) => {
-      const dateParts = order.date.split(",")[0].split("/");
-      return [
-        new Date(dateParts[2], dateParts[1] - 1, dateParts[0]),
-        order.amount,
-      ];
-    });
-
-    for (let x of orderDate) {
-      const orderDateObj = x[0];
-      const orderAmount = x[1];
-
-      if (
-        thisday == orderDateObj.getDate() &&
-        thismonth == orderDateObj.getMonth() + 1 &&
-        thisyear == orderDateObj.getFullYear()
-      ) {
-        salesData.today += orderAmount;
-      }
-      if (Number(thisday) - orderDateObj.getDate() <= 7) {
-        salesData.week += orderAmount;
-      }
-      if (
-        thismonth == orderDateObj.getMonth() + 1 &&
-        thisyear == orderDateObj.getFullYear()
-      ) {
-        salesData.month += orderAmount;
-      }
-      if (thisyear == orderDateObj.getFullYear()) {
-        salesData.year += orderAmount;
-      }
-    }
-  } catch (error) {
-    console.error("Error calculating sales data:", error);
-    return <p>Error calculating chart data.</p>;
-  }
-
-  if (Object.values(salesData).every((value) => value === 0)) {
+  // Check if revenueRecord is available
+  if (!revenueRecord) {
     return <p>No sales data available.</p>;
   }
+
+  // Prepare sales data from revenueRecord
+  const salesData = {
+    today: revenueRecord.dayRevenue,
+    week: revenueRecord.weekRevenue,
+    month: revenueRecord.monthRevenue,
+    year: revenueRecord.yearRevenue,
+  };
 
   // Prepare data for the bar chart
   const data = {

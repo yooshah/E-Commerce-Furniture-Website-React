@@ -8,3 +8,7 @@
 .visble-poniter {
   cursor: pointer;
 }
+
+.user-container {
+  min-height: 34.8em;
+}

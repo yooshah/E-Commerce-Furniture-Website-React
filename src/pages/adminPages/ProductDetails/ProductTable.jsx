@@ -4,7 +4,8 @@ import TableFilter from "./TableFilter";
 import "./AdminProducts.css";
 
 /* eslint-disable react/prop-types */
-function ProductTable({ products, handleEdit, handleAddProduct, onDelete }) {
+
+function ProductTable({ products, handleAddProduct, onDelete, handleEdit }) {
   const [tableProduct, setTableProduct] = useState(products);
 
   useEffect(() => {
@@ -45,6 +46,8 @@ function ProductTable({ products, handleEdit, handleAddProduct, onDelete }) {
               <th scope="col">Brand</th>
               <th scope="col">price</th>
               <th scope="col">Rating</th>
+              <th scope="col">Stock</th>
+
               <th scope="col">Edit🖋️</th>
               <th scope="col">Delete</th>
             </tr>
@@ -64,6 +67,7 @@ function ProductTable({ products, handleEdit, handleAddProduct, onDelete }) {
                 <td>{item.brand}</td>
                 <td>{item.price}</td>
                 <td>{item.rating}</td>
+                <td>{item.stock}</td>
                 <td>
                   {" "}
                   <span

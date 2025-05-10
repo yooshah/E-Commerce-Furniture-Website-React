@@ -8,7 +8,6 @@ import Footer from "./components/userComponent/userFooter/Footer.jsx";
 import AdminHome from "./components/adminComponent/adminNavbar/AdminHome.jsx";
 import "./App.css";
 import Order from "./pages/userPages/Order/Order.jsx";
-import OrderedItems from "./pages/userPages/Order/OrderedItems.jsx";
 import Store from "./pages/userPages/store/Store.jsx";
 import AdminProducts from "./pages/adminPages/ProductDetails/AdminProducts.jsx";
 import UserDetails from "./pages/adminPages/UserDetails/UserDetails.jsx";
@@ -16,6 +15,8 @@ import AdminFooter from "./components/adminComponent/adminFooter/AdminFooter.jsx
 import AdminDashboard from "./pages/adminPages/AdminDashboard/AdminDashboard.jsx";
 import AdminAccount from "./pages/adminPages/AdminDetail/AdminAccount.jsx";
 import ProtectedRoute from "./pages/adminPages/AdminDetail/ProtectedRoute.jsx";
+import WishListTable from "./pages/userPages/WishList/WishListTable.jsx";
+import DeliveryAddress from "./pages/userPages/DeliveryAddress/DeliveryAddress.jsx";
 
 function App() {
   return (
@@ -27,8 +28,11 @@ function App() {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/login" element={<Login />} />
           <Route path="/cart" element={<Carts />} />
-          <Route path="/order" element={<Order />} />
-          <Route path="/shipping" element={<OrderedItems />} />
+          <Route path="/favorite" element={<WishListTable />} />
+          <Route path="/payment" element={<DeliveryAddress />} />
+
+          <Route path="/orders" element={<Order />} />
+          {/* <Route path="/shipping" element={<OrderedItems />} /> */}
           <Route path="/store" element={<Store />} />
         </Routes>
         <Footer />
